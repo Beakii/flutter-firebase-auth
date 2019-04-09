@@ -3,6 +3,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'auth.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
+//GoogleSignIn object detailing the required information for Google Login
   GoogleSignIn _googleSignin = GoogleSignIn(
     scopes: <String>[
       'email', 
@@ -11,6 +12,8 @@ import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
   );
 
 class LoginPage extends StatefulWidget{
+  //Adding objects in the constructer wrapped in {} indicates that they become properties of the class
+  //This allows access to the methods detailed in the auth.dart file
   LoginPage({this.auth, this.onSignedIn, this.onSignedOut});
   final BaseAuth auth;
   final VoidCallback onSignedIn;
@@ -20,6 +23,7 @@ class LoginPage extends StatefulWidget{
   State<StatefulWidget> createState() => _LoginPageState();
 }
 
+//Allows for switching between login button setup & logic and register button setup & logic
 enum FormType{
   login,
   register
@@ -33,6 +37,8 @@ class _LoginPageState extends State<LoginPage>{
   String _password;
   FormType _formType = FormType.login;
 
+//Called from ValidateAndSubmit
+//Validates the form and saves its current state
   bool validateAndSave(){
     final form = formKey.currentState;
     if(form.validate()){
@@ -44,6 +50,8 @@ class _LoginPageState extends State<LoginPage>{
     }
   }
 
+//Called from "Sign in with Google" button
+//Seperate validAndSubmit function that handles google signins specifically
   Future validateAndSubmitGoogle() async{
     if(_formType == FormType.login){
       try{
@@ -76,6 +84,8 @@ class _LoginPageState extends State<LoginPage>{
     }
   }
 
+//Called after logging in/creating a new account
+//Signs the user into the application
   Future validateAndSubmit() async {
     if(validateAndSave()){
       bool createButton = false;
@@ -94,6 +104,9 @@ class _LoginPageState extends State<LoginPage>{
       catch(e){
         print("Error: $e");
         if(createButton){
+
+//Error Diaglog messages SHOULD be abstracted to new file to make it more modular
+//Builds a dialog box with close button detailing the error encountered
           showDialog(
             context: context,
             builder: (BuildContext context){
@@ -114,31 +127,35 @@ class _LoginPageState extends State<LoginPage>{
         }
         else{
           if(createButton){
-          showDialog(
-            context: context,
-            builder: (BuildContext context){
-              return AlertDialog(
-                title: Text("Email/Password Sign in Failure"),
-                content: Text("Something went wrong with signing into the application"),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Close"),
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            }
-          );
+
+//Error Diaglog messages SHOULD be abstracted to new file to make it more modular
+//Builds a dialog box with close button detailing the error encountered
+            showDialog(
+              context: context,
+              builder: (BuildContext context){
+                return AlertDialog(
+                  title: Text("Email/Password Sign in Failure"),
+                  content: Text("Something went wrong with signing into the application"),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text("Close"),
+                      onPressed: (){
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              }
+            );
+          }
         }
-        }
-        
         widget.onSignedOut();
       }
     }
   }
 
+//Called from button press on button "Create an Account"
+//Changes the FormType enum to change the button layout and logic to a register page
   void moveToRegister(){
     formKey.currentState.reset();
     setState(() {
@@ -146,6 +163,8 @@ class _LoginPageState extends State<LoginPage>{
     });
   }
 
+//Called from button press on button "Already have an account"
+//Changes the FormType enum to change the button layout and logic to a Login page
     void moveToLogin(){
     formKey.currentState.reset();
     setState(() {
@@ -153,6 +172,7 @@ class _LoginPageState extends State<LoginPage>{
     });
   }
 
+//Builds the layout of the application screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,6 +192,8 @@ class _LoginPageState extends State<LoginPage>{
     );
   }
 
+//This method could be abstracted to a new file for increased modularity
+//Builds the email and password text input boxes for the login form.
   List<Widget> buildInput(){
     return[
       TextFormField(
@@ -188,6 +210,8 @@ class _LoginPageState extends State<LoginPage>{
     ];
   }
 
+//This method could be abstracted to a new file for increased modularity
+//Builds the login/signin with google/create an account/already have an account button & logic
   List<Widget> buildSubmitButtons(){
     if(_formType == FormType.login){
       return[
