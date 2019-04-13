@@ -1,12 +1,14 @@
+import 'package:fire_login/auth.dart';
 import 'package:flutter/material.dart';
 import 'auth.dart';
 
 class HomePage extends StatelessWidget{
+
   HomePage({this.auth, this.onSignedOut});
   final BaseAuth auth;
   final VoidCallback onSignedOut;
 
-  void _signOut() async{
+    void _signOut() async{
     try{
       await auth.signOut();
       onSignedOut();
